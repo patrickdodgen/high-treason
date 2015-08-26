@@ -1,0 +1,97 @@
+<head>
+  <title>High Treason</title>
+</head>
+ 
+ <body>
+	{{#if currentUser}}
+		<button class="logout">Logout</button>
+	{{/if}}
+	<br>
+	{{> splash}}
+	{{> games}}
+	{{> lobbyCreation}}
+	{{> lobby}}
+</body>
+ 
+ <template name="splash">
+	{{#if route}}
+		<div class="container">
+			<h1>Welcome to High Treason!</h1>
+			<p>High Treason is an Avalon clone with some names changed for reasons</p>
+			<p>Create an account or login to begin</p>
+			{{> loginButtons}}
+		</div>
+	{{/if}}
+ </template>
+ 
+ <template name="games">
+	{{#if route}}
+		<div class="container">
+			<h1>Welcome, {{username}}!</h1>
+			<p>Join a lobby or create your own</p>
+			<button class="create">Create a lobby</button>
+			<ul>
+				{{#each games}}
+					{{> game}}
+				{{/each}}
+			</ul>
+		</div>
+	{{/if}}
+ </template>
+ 
+ <template name="game">
+	<li>
+		<span class="text"><strong>{{username}}</strong>'s lobby {{currentPlayerCount}} / {{maxPlayers}} players</span>
+		<button class="join">Join!</button>
+	</li>
+ </template>
+ 
+ <template name="lobbyCreation">
+ 	{{#if route}}
+		<div class="container">
+			<button class="leave">Return to lobby listings</button><br>
+			<h1>Create a lobby</h1>
+			<form class="lobbyCreation">
+				<table>
+					<tr>
+						<td>Players</td>
+						<td><input type="number" name="maxPlayers" min="5" max="10" value="5"/></td>
+					</tr>
+					{{#each roles}}
+						{{> role}}
+					{{/each}}
+				</table>
+				<button>Create!</button>
+			</form>
+		</div>
+	{{/if}}
+ </template>
+ 
+ <template name="role">
+	<tr>
+		<td>{{title}} ({{name}})</td>
+		<td><input type="checkbox" name="{{name}}"/></td>
+	</tr>
+ </template>
+ 
+ <template name="lobby">
+	{{#if route}}
+		<div class="container">
+			<p>You are currently in a game</p>
+			<h2>{{gameStuff.username}}'s lobby</h2>
+		<p>{{gameStuff.currentPlayerCount}} / {{gameStuff.maxPlayers}} players</p>
+		<p>Current players: {{gameStuff.currentPlayerNames}} </p>
+		<p>Special Roles: {{gameStuff.chosenRoles}}</p>
+		{{#if gameStuff.owner = currentUser._id}} <!-- ownership does not work as expected here -->
+			{{#if gameStuff.currentPlayerCount = gameStuff.maxPlayers}}
+				<button class="startGame">Start Game</button>
+			{{/if}}
+			<button class="closeLobby">Close Lobby</button>
+		{{/if}}
+		</div>
+	{{/if}}
+ </template>
+ 
+ <template name="gameInfo">
+ 
+ </template>
