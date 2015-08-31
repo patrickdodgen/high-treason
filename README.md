@@ -17,3 +17,5 @@ After installation, run these commands to get your working copy in a similar sta
 HighTreason is an attempt to create a game similar to Avalon/Resistance through a web interface.
 
 Players are expected to login with their smartphones where they will receive pertinent information about the game.
+
+For those curious, there is a Trello board here https://trello.com/b/MalvsTWX/high-treason-game
