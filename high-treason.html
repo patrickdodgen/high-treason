@@ -27,7 +27,7 @@
  <template name="games">
 	{{#if route}}
 		<div class="container">
-			<h1>Welcome, {{username}}!</h1>
+			<h1>Welcome, {{currentUser.username}}!</h1>
 			<p>Join a lobby or create your own</p>
 			<button class="create">Create a lobby</button>
 			<ul>
@@ -58,7 +58,7 @@
 						<td><input type="number" name="maxPlayers" min="5" max="10" value="5"/></td>
 					</tr>
 					{{#each roles}}
-						{{> role}}
+						{{> roleSelection}}
 					{{/each}}
 				</table>
 				<button>Create!</button>
@@ -67,7 +67,7 @@
 	{{/if}}
  </template>
  
- <template name="role">
+ <template name="roleSelection">
 	<tr>
 		<td>{{title}} ({{name}})</td>
 		<td><input type="checkbox" name="{{name}}"/></td>
@@ -82,8 +82,7 @@
 		<p>{{gameStuff.currentPlayerCount}} / {{gameStuff.maxPlayers}} players</p>
 		<p>Current players: {{gameStuff.currentPlayerNames}} </p>
 		<p>Special Roles: {{gameStuff.chosenRoles}}</p>
-		<p> {{currentUser._id}} </p>
-		{{#if isOwner}} <!-- ownership does not work as expected here -->
+		{{#if isOwner}}
 			{{#if isLobbyFull}}
 				<button class="startGame">Start Game</button>
 			{{/if}}
@@ -93,8 +92,4 @@
 		{{/if}}
 		</div>
 	{{/if}}
- </template>
- 
- <template name="gameInfo">
- 
  </template>

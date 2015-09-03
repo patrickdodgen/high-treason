@@ -7,8 +7,8 @@ if (Meteor.isClient) {
   Meteor.subscribe("roles");
   var Router = Backbone.Router.extend({
 	  routes: {
-		"lobby" : "lobby",
 		"games/create" : "lobbyCreation",
+		"lobby" : "lobby",
 		"games": "games",
 		"": "splash"
 	  },
@@ -34,8 +34,7 @@ if (Meteor.isClient) {
 	var gameId = Session.get("currentGame");
 	if (!gameId)
 	{
-		var guard = Games.findOne({ currentPlayerIds: Meteor.userId()});
-		gameId = guard && guard._id;
+		gameId = Games.findOne({ currentPlayerIds: Meteor.userId()})._id;
 	}
 	if (!gameId) {
 		Session.set('currentPage', 'games');
@@ -60,7 +59,7 @@ if (Meteor.isClient) {
 	}
   });
   
-  
+
   Template.games.helpers({
 	route: function() {
 		return Session.get("currentPage") === 'games';
@@ -69,20 +68,20 @@ if (Meteor.isClient) {
 		return Meteor.user().username;
 	},
 	games: function() {
-		checkGameState();
 		return Games.find({}, {sort: {createdAt: -1}});
 	},
   });
   
   Template.games.events({
 	"click .create": function () {
-		Session.set('currentPage','lobbyCreation');
-		//Meteor.call('createGame', 10);
+
+			Session.set('currentPage','lobbyCreation');
 	}
   });
   
   Template.games.events({
 	"click .join": function () {
+		if (Session.get("currentPage") !== 'games');
 		Meteor.call('joinGame', this._id);
 		Session.set('currentGame', this._id);
 		Session.set('currentPage','lobby');
@@ -182,14 +181,18 @@ Meteor.methods({
 		});
 	},
 	joinGame: function (gameId) {
-		Games.update( 
-			{ _id: gameId},
-			{ 
-				$push: { currentPlayerIds: Meteor.userId() },
-				$push: { currentPlayerNames: Meteor.user().username },
-				$inc: { currentPlayerCount: 1 }
-			}
-		);
+		var game = Games.findOne(
+			{ _id: gameId
+			});
+		if (!game.currentPlayerIds.contains(Meteor.userId()))
+			Games.update( 
+				{ _id: gameId},
+				{ 
+					$push: { currentPlayerIds: Meteor.userId() },
+					$push: { currentPlayerNames: Meteor.user().username },
+					$inc: { currentPlayerCount: 1 }
+				}
+			);
 	},
 	closeLobby: function (gameId) {
 		Games.remove( {_id: gameId} );
