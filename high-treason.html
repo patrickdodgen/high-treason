@@ -82,11 +82,14 @@
 		<p>{{gameStuff.currentPlayerCount}} / {{gameStuff.maxPlayers}} players</p>
 		<p>Current players: {{gameStuff.currentPlayerNames}} </p>
 		<p>Special Roles: {{gameStuff.chosenRoles}}</p>
-		{{#if gameStuff.owner = currentUser._id}} <!-- ownership does not work as expected here -->
-			{{#if gameStuff.currentPlayerCount = gameStuff.maxPlayers}}
+		<p> {{currentUser._id}} </p>
+		{{#if isOwner}} <!-- ownership does not work as expected here -->
+			{{#if isLobbyFull}}
 				<button class="startGame">Start Game</button>
 			{{/if}}
 			<button class="closeLobby">Close Lobby</button>
+		{{else}}
+			<button class="leaveLobby">Leave Lobby</button>
 		{{/if}}
 		</div>
 	{{/if}}

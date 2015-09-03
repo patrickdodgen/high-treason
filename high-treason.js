@@ -127,6 +127,13 @@ if (Meteor.isClient) {
 	gameStuff: function() {
 		return Games.findOne( { _id: Session.get('currentGame') });
 	},
+	isOwner: function() {
+		return Meteor.userId() === Games.findOne( {_id: Session.get('currentGame') }).owner;
+	},
+	isLobbyFull: function() {
+		var obj = Games.findOne( { _id: Session.get('currentGame') });
+		return obj.currentPlyaerCount === obj.maxPlayers;
+	}
   });
   
   Template.lobby.events({
