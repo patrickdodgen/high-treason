@@ -28,13 +28,15 @@ if (Meteor.isClient) {
 
   var app_router = new Router;
 
-  Backbone.history.start({ pushState : true, root : "" });
+  Backbone.history.start({ pushState : true});
   
   var checkGameState = function() {
 	var gameId = Session.get("currentGame");
 	if (!gameId)
 	{
-		gameId = Games.findOne({ currentPlayerIds: Meteor.userId()})._id;
+		var game = Games.findOne({ currentPlayerIds: Meteor.userId()});
+		if (game)
+			gameId = game._id;
 	}
 	if (!gameId) {
 		Session.set('currentPage', 'games');
@@ -62,12 +64,14 @@ if (Meteor.isClient) {
 
   Template.games.helpers({
 	route: function() {
+		// checkGameState();
 		return Session.get("currentPage") === 'games';
 	},
 	username: function () {
 		return Meteor.user().username;
 	},
 	games: function() {
+		checkGameState();
 		return Games.find({}, {sort: {createdAt: -1}});
 	},
   });
@@ -81,7 +85,7 @@ if (Meteor.isClient) {
   
   Template.games.events({
 	"click .join": function () {
-		if (Session.get("currentPage") !== 'games');
+		//if (Session.get("currentPage") !== 'games');
 		Meteor.call('joinGame', this._id);
 		Session.set('currentGame', this._id);
 		Session.set('currentPage','lobby');
@@ -143,6 +147,11 @@ if (Meteor.isClient) {
 		 Meteor.call('closeLobby', Session.get('currentGame'));
 		 Session.set('currentGame', null);
 		 Session.set('currentPage', 'games');
+	 },
+	 "click .leaveLobby": function() {
+		 Meteor.call('leaveLobby', Session.get('currentGame'));
+		 Session.set('currentGame', null);
+		 Session.set('currentPage', 'games');
 	 }
   });
   
@@ -168,6 +177,10 @@ Meteor.methods({
 		if (! Meteor.userId()) {
 		  throw new Meteor.Error("not-authorized");
 		}
+		if (maxPlayers < 5 || maxPlayers > 10)
+		{
+			throw new Meteor.Error("invalid number of players specified");
+		}
 	 
 		Games.insert({
 			currentPlayerIds: [Meteor.userId()],
@@ -181,15 +194,15 @@ Meteor.methods({
 		});
 	},
 	joinGame: function (gameId) {
-		var game = Games.findOne(
-			{ _id: gameId
-			});
-		if (!game.currentPlayerIds.contains(Meteor.userId()))
+		//var game = Games.findOne(
+		//	{ _id: gameId
+		//	});
+		//if (!game.currentPlayerIds.contains(Meteor.userId()))
 			Games.update( 
 				{ _id: gameId},
 				{ 
-					$push: { currentPlayerIds: Meteor.userId() },
-					$push: { currentPlayerNames: Meteor.user().username },
+					$push: { currentPlayerNames: Meteor.user().username, 
+							 currentPlayerIds: Meteor.userId() },
 					$inc: { currentPlayerCount: 1 }
 				}
 			);
