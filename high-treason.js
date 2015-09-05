@@ -78,7 +78,6 @@ if (Meteor.isClient) {
   
   Template.games.events({
 	"click .create": function () {
-
 			Session.set('currentPage','lobbyCreation');
 	}
   });
@@ -128,15 +127,25 @@ if (Meteor.isClient) {
 		return Session.get("currentPage") === 'lobby';
 	},
 	gameStuff: function() {
-		return Games.findOne( { _id: Session.get('currentGame') });
+		var game = Games.findOne( { _id: Session.get('currentGame') });
+		if (!game)
+		{
+			Session.set("currentGame", null);
+			Session.set("currentPage", "games");
+			return null;
+		}
+		else
+		{
+			return game;
+		}
 	},
 	isOwner: function() {
 		return Meteor.userId() === Games.findOne( {_id: Session.get('currentGame') }).owner;
 	},
 	isLobbyFull: function() {
 		var obj = Games.findOne( { _id: Session.get('currentGame') });
-		return obj.currentPlyaerCount === obj.maxPlayers;
-	}
+		return obj.currentPlayerCount === obj.maxPlayers;
+	},
   });
   
   Template.lobby.events({
@@ -194,10 +203,6 @@ Meteor.methods({
 		});
 	},
 	joinGame: function (gameId) {
-		//var game = Games.findOne(
-		//	{ _id: gameId
-		//	});
-		//if (!game.currentPlayerIds.contains(Meteor.userId()))
 			Games.update( 
 				{ _id: gameId},
 				{ 
@@ -209,6 +214,16 @@ Meteor.methods({
 	},
 	closeLobby: function (gameId) {
 		Games.remove( {_id: gameId} );
+	},
+	leaveLobby: function (gameId) {
+		Games.update( 
+			{ _id: gameId},
+			{ 
+				$pull: { currentPlayerNames: Meteor.user().username, 
+						 currentPlayerIds: Meteor.userId() },
+				$inc: { currentPlayerCount: -1 }
+			}
+		);
 	},
 });
 
