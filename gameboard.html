@@ -1,0 +1,12 @@
+<template name="board">
+	{{#if route}}
+		<div class="container">
+			<p> You are currently in {{gameStuff.username}}'s game</p>
+			<div id="#missionDiv">
+				{{#each gameStuff.missionLayout}}
+					<p>Requires: {{this}}</p>
+				{{/each}}
+			</div>
+		</div>
+	{{/if}}
+</template>

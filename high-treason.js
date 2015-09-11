@@ -10,6 +10,7 @@ if (Meteor.isClient) {
 		"games/create" : "lobbyCreation",
 		"lobby" : "lobby",
 		"games": "games",
+		"board" : "board",
 		"": "splash"
 	  },
 	  splash: function () {
@@ -23,6 +24,9 @@ if (Meteor.isClient) {
 	  },
 	  lobby: function () {
 	   Session.set('currentPage', 'lobby');
+	  },
+	  board: function() {
+	   Session.set('currentPage', 'board');
 	  }
   });
 
@@ -58,6 +62,25 @@ if (Meteor.isClient) {
   Template.splash.helpers({
 	route: function() {
 		return Session.get("currentPage") === 'splash';
+	}
+  });
+  
+   Template.board.helpers({
+	route: function() {
+		return Session.get("currentPage") === 'board';
+	},
+	gameStuff: function() {
+		var game = Games.findOne( { _id: Session.get('currentGame') });
+		if (!game)
+		{
+			Session.set("currentGame", null);
+			Session.set("currentPage", "games");
+			return null;
+		}
+		else
+		{
+			return game;
+		}
 	}
   });
   
@@ -144,13 +167,14 @@ if (Meteor.isClient) {
 	},
 	isLobbyFull: function() {
 		var obj = Games.findOne( { _id: Session.get('currentGame') });
-		return obj.currentPlayerCount === obj.maxPlayers;
+		return obj.currentPlayerCount == obj.maxPlayers;
 	},
   });
   
   Template.lobby.events({
 	 "click .startGame": function() {
 		 // do some stuff here
+		 Session.set("currentPage", "board");
 	 },
 	 "click .closeLobby": function() {
 		 Meteor.call('closeLobby', Session.get('currentGame'));
@@ -180,6 +204,15 @@ if (Meteor.isClient) {
   });
 }
 
+var missionLayouts = [
+	[2,3,2,3,3],
+	[2,3,4,3,4],
+	[2,3,3,4,4],
+	[3,4,4,5,5],
+	[3,4,4,5,5],
+	[3,4,4,5,5]
+];
+
 Meteor.methods({
 	createGame: function (maxPlayers, chosenRoles) {
 		// Make sure the user is logged in before inserting a task
@@ -195,6 +228,7 @@ Meteor.methods({
 			currentPlayerIds: [Meteor.userId()],
 			currentPlayerNames: [Meteor.user().username],
 			currentPlayerCount: 1,
+			missionLayout: missionLayouts[maxPlayers-5],
 			maxPlayers: maxPlayers,
 			chosenRoles: chosenRoles,
 			createdAt: new Date(),
