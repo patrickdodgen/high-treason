@@ -42,12 +42,6 @@ if (Meteor.isClient) {
 	  checkGameState();
   }
 
-  Template.splash.helpers({
-	route: function() {
-		return Session.get("currentPage") === 'splash';
-	}
-  });
-
   Template.body.events({
 	"click .logout": function () {
       Meteor.logout();
