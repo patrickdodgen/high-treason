@@ -1,0 +1,19 @@
+<template name="lobby">
+ {{#if route}}
+   <div class="container">
+     <p>You are currently in a game</p>
+     <h2>{{gameStuff.username}}'s lobby</h2>
+   <p>{{gameStuff.currentPlayerCount}} / {{gameStuff.maxPlayers}} players</p>
+   <p>Current players: {{gameStuff.currentPlayerNames}} </p>
+   <p>Special Roles: {{gameStuff.chosenRoles}}</p>
+   {{#if isOwner}}
+     {{#if isLobbyFull}}
+       <button class="startGame">Start Game</button>
+     {{/if}}
+     <button class="closeLobby">Close Lobby</button>
+   {{else}}
+     <button class="leaveLobby">Leave Lobby</button>
+   {{/if}}
+   </div>
+ {{/if}}
+</template>

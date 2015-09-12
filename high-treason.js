@@ -33,7 +33,7 @@ if (Meteor.isClient) {
   var app_router = new Router;
 
   Backbone.history.start({ pushState : true});
-  
+
   var checkGameState = function() {
 	var gameId = Session.get("currentGame");
 	if (!gameId)
@@ -50,7 +50,7 @@ if (Meteor.isClient) {
 		Session.set('currentGame', gameId);
 	}
   };
-  
+
   if (!Meteor.user()) {
 	  Session.set('currentPage', 'splash');
   }
@@ -58,32 +58,15 @@ if (Meteor.isClient) {
   {
 	  checkGameState();
   }
-  
+
   Template.splash.helpers({
 	route: function() {
 		return Session.get("currentPage") === 'splash';
 	}
   });
-  
-   Template.board.helpers({
-	route: function() {
-		return Session.get("currentPage") === 'board';
-	},
-	gameStuff: function() {
-		var game = Games.findOne( { _id: Session.get('currentGame') });
-		if (!game)
-		{
-			Session.set("currentGame", null);
-			Session.set("currentPage", "games");
-			return null;
-		}
-		else
-		{
-			return game;
-		}
-	}
-  });
-  
+
+
+
 
   Template.games.helpers({
 	route: function() {
@@ -98,13 +81,13 @@ if (Meteor.isClient) {
 		return Games.find({}, {sort: {createdAt: -1}});
 	},
   });
-  
+
   Template.games.events({
 	"click .create": function () {
 			Session.set('currentPage','lobbyCreation');
 	}
   });
-  
+
   Template.games.events({
 	"click .join": function () {
 		//if (Session.get("currentPage") !== 'games');
@@ -113,7 +96,7 @@ if (Meteor.isClient) {
 		Session.set('currentPage','lobby');
 	}
   });
-  
+
   Template.lobbyCreation.helpers({
 	route: function() {
 		return Session.get("currentPage") === 'lobbyCreation';
@@ -122,7 +105,7 @@ if (Meteor.isClient) {
 		return Roles.find();
 	}
   });
-  
+
   Template.lobbyCreation.events({
 	"click .leave": function () {
 		Session.set('currentPage', 'games');
@@ -130,75 +113,32 @@ if (Meteor.isClient) {
 	"submit .lobbyCreation": function(event) {
 		event.preventDefault();
 		var maxPlayers = event.target.maxPlayers.value;
-		
+
 		var roles = Roles.find();
-	 
+
 		var chosenRoles = [];
-	 
+
 		roles.forEach(function(role) {
 			if(event.target[role.name].checked)
 				chosenRoles.push(role.name);
 		});
-		
+
 		Meteor.call('createGame', maxPlayers, chosenRoles);
 		Session.set('currentPage', 'lobby');
 	}
   });
-    
-  Template.lobby.helpers({
-	route: function() {
-		return Session.get("currentPage") === 'lobby';
-	},
-	gameStuff: function() {
-		var game = Games.findOne( { _id: Session.get('currentGame') });
-		if (!game)
-		{
-			Session.set("currentGame", null);
-			Session.set("currentPage", "games");
-			return null;
-		}
-		else
-		{
-			return game;
-		}
-	},
-	isOwner: function() {
-		return Meteor.userId() === Games.findOne( {_id: Session.get('currentGame') }).owner;
-	},
-	isLobbyFull: function() {
-		var obj = Games.findOne( { _id: Session.get('currentGame') });
-		return obj.currentPlayerCount == obj.maxPlayers;
-	},
-  });
-  
-  Template.lobby.events({
-	 "click .startGame": function() {
-		 // do some stuff here
-		 Session.set("currentPage", "board");
-	 },
-	 "click .closeLobby": function() {
-		 Meteor.call('closeLobby', Session.get('currentGame'));
-		 Session.set('currentGame', null);
-		 Session.set('currentPage', 'games');
-	 },
-	 "click .leaveLobby": function() {
-		 Meteor.call('leaveLobby', Session.get('currentGame'));
-		 Session.set('currentGame', null);
-		 Session.set('currentPage', 'games');
-	 }
-  });
-  
+
   Template.body.events({
 	"click .logout": function () {
       Meteor.logout();
 	  Session.set('currentPage', 'splash');
     },
   });
-  
+
   Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
   });
-  
+
   Accounts.onLogin( function (){
 	  Session.set('currentPage', 'games');
   });
@@ -223,7 +163,7 @@ Meteor.methods({
 		{
 			throw new Meteor.Error("invalid number of players specified");
 		}
-	 
+
 		Games.insert({
 			currentPlayerIds: [Meteor.userId()],
 			currentPlayerNames: [Meteor.user().username],
@@ -237,10 +177,10 @@ Meteor.methods({
 		});
 	},
 	joinGame: function (gameId) {
-			Games.update( 
+			Games.update(
 				{ _id: gameId},
-				{ 
-					$push: { currentPlayerNames: Meteor.user().username, 
+				{
+					$push: { currentPlayerNames: Meteor.user().username,
 							 currentPlayerIds: Meteor.userId() },
 					$inc: { currentPlayerCount: 1 }
 				}
@@ -250,10 +190,10 @@ Meteor.methods({
 		Games.remove( {_id: gameId} );
 	},
 	leaveLobby: function (gameId) {
-		Games.update( 
+		Games.update(
 			{ _id: gameId},
-			{ 
-				$pull: { currentPlayerNames: Meteor.user().username, 
+			{
+				$pull: { currentPlayerNames: Meteor.user().username,
 						 currentPlayerIds: Meteor.userId() },
 				$inc: { currentPlayerCount: -1 }
 			}
@@ -266,7 +206,7 @@ if (Meteor.isServer) {
   Meteor.publish("games", function () {
     return Games.find();
   });
-  
+
   Meteor.publish("roles", function () {
     return Roles.find();
   });
