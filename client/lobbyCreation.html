@@ -1,0 +1,21 @@
+<template name="lobbyCreation">
+  {{#if route}}
+  <div class="container">
+    <button class="leave">Return to lobby listings</button>
+    <br>
+    <h1>Create a lobby</h1>
+    <form class="lobbyCreation">
+      <table>
+        <tr>
+          <td>Players</td>
+          <td>
+            <input type="number" name="maxPlayers" min="5" max="10" value="5" />
+          </td>
+        </tr>
+        {{#each roles}} {{> roleSelection}} {{/each}}
+      </table>
+      <button>Create!</button>
+    </form>
+  </div>
+  {{/if}}
+</template>
