@@ -25,21 +25,6 @@
 	{{/if}}
  </template>
 
- <template name="games">
-	{{#if route}}
-		<div class="container">
-			<h1>Welcome, {{currentUser.username}}!</h1>
-			<p>Join a lobby or create your own</p>
-			<button class="create">Create a lobby</button>
-			<ul>
-				{{#each games}}
-					{{> game}}
-				{{/each}}
-			</ul>
-		</div>
-	{{/if}}
- </template>
-
  <template name="game">
 	<li>
 		<span class="text"><strong>{{username}}</strong>'s lobby {{currentPlayerCount}} / {{maxPlayers}} players</span>
