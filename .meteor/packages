@@ -8,3 +8,4 @@ meteor-platform
 backbone
 accounts-ui
 accounts-password
+accounts-base

@@ -133,6 +133,15 @@ Meteor.methods({
 });
 
 if (Meteor.isServer) {
+
+  Accounts.validateNewUser(function(user){
+      if(user.username && /.*\(Bot\)/.test(user.username))
+        throw new Meteor.Error(403, "That user already exists.");
+      if(user.username && user.username.length >= 3)
+        return true;
+      throw new Meteor.Error(403, "Usernames must be at least 3 characters long.");
+  });
+
   // This code only runs on the server
   Meteor.publish("games", function () {
     return Games.find();
