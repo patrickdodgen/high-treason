@@ -3,11 +3,9 @@ Template.lobby.helpers({
     return Session.get("currentPage") === 'lobby';
   },
   gameStuff: function() {
-    var game = Games.findOne({
-      _id: Session.get('currentGame')
-    });
+    var game = Game.get();
     if (!game) {
-      Session.set("currentGame", null);
+      Game.set(null);
       Session.set("currentPage", "games");
       return null;
     } else {
@@ -15,15 +13,12 @@ Template.lobby.helpers({
     }
   },
   isOwner: function() {
-    return Meteor.userId() === Games.findOne({
-      _id: Session.get('currentGame')
-    }).owner;
+    var game = Game.get();
+    return game && Meteor.userId() === game.owner;
   },
   isLobbyFull: function() {
-    var obj = Games.findOne({
-      _id: Session.get('currentGame')
-    });
-    return obj.currentPlayerCount == obj.maxPlayers;
+    var game = Game.get();
+    return game && game.currentPlayerCount === game.maxPlayers;
   },
 });
 
@@ -32,14 +27,14 @@ Template.lobby.events({
     // do some stuff here
     Session.set("currentPage", "board");
   },
-  "click .closeLobby": function() {
-    Meteor.call('closeLobby', Session.get('currentGame'));
-    Session.set('currentGame', null);
+  "click .closeGame": function() {
+    Meteor.call('closeGame', Session.get('currentGame'));
+    Game.set(null);
     Session.set('currentPage', 'games');
   },
-  "click .leaveLobby": function() {
-    Meteor.call('leaveLobby', Session.get('currentGame'));
-    Session.set('currentGame', null);
+  "click .leaveGame": function() {
+    Meteor.call('leaveGame', Session.get('currentGame'));
+    Game.set(null);
     Session.set('currentPage', 'games');
   }
 });

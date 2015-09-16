@@ -75,63 +75,6 @@ if (Meteor.isClient) {
     }
 }
 
-var missionLayouts = [
-	[2,3,2,3,3],
-	[2,3,4,3,4],
-	[2,3,3,4,4],
-	[3,4,4,5,5],
-	[3,4,4,5,5],
-	[3,4,4,5,5]
-];
-
-Meteor.methods({
-	createGame: function (maxPlayers, chosenRoles) {
-		// Make sure the user is logged in before inserting a task
-		if (! Meteor.userId()) {
-		  throw new Meteor.Error("not-authorized");
-		}
-		if (maxPlayers < 5 || maxPlayers > 10)
-		{
-			throw new Meteor.Error("invalid number of players specified");
-		}
-
-		Games.insert({
-			currentPlayerIds: [Meteor.userId()],
-			currentPlayerNames: [Meteor.user().username],
-			currentPlayerCount: 1,
-			missionLayout: missionLayouts[maxPlayers-5],
-			maxPlayers: maxPlayers,
-			chosenRoles: chosenRoles,
-			createdAt: new Date(),
-			owner: Meteor.userId(),
-			username: Meteor.user().username
-		});
-	},
-	joinGame: function (gameId) {
-			Games.update(
-				{ _id: gameId},
-				{
-					$push: { currentPlayerNames: Meteor.user().username,
-							 currentPlayerIds: Meteor.userId() },
-					$inc: { currentPlayerCount: 1 }
-				}
-			);
-	},
-	closeLobby: function (gameId) {
-		Games.remove( {_id: gameId} );
-	},
-	leaveLobby: function (gameId) {
-		Games.update(
-			{ _id: gameId},
-			{
-				$pull: { currentPlayerNames: Meteor.user().username,
-						 currentPlayerIds: Meteor.userId() },
-				$inc: { currentPlayerCount: -1 }
-			}
-		);
-	},
-});
-
 if (Meteor.isServer) {
 
   Accounts.validateNewUser(function(user){
