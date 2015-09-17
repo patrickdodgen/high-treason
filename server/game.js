@@ -30,9 +30,6 @@ var playerAdd = function(game, playerName) {
   }, {
     $push: {
       players: playerName
-    },
-    $inc: {
-      currentPlayerCount: 1
     }
   });
 };
@@ -43,7 +40,6 @@ Meteor.methods({
       throw new Meteor.Error("invalid number of players specified");
     Games.insert({
       players: [Meteor.user().username],
-      currentPlayerCount: 1,
       missionLayout: CONSTANTS.missionLayouts[maxPlayers - 5],
       maxPlayers: maxPlayers,
       chosenRoles: chosenRoles,
@@ -70,9 +66,6 @@ Meteor.methods({
     }, {
       $pull: {
         players: Meteor.user().username
-      },
-      $inc: {
-        currentPlayerCount: -1
       }
     });
   }),

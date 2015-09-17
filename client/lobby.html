@@ -3,7 +3,7 @@
    <div class="container">
      <p>You are currently in a game</p>
      <h2>{{gameStuff.username}}'s lobby</h2>
-   <p>{{gameStuff.currentPlayerCount}} / {{gameStuff.maxPlayers}} players</p>
+   <p>{{gameStuff.players.length}} / {{gameStuff.maxPlayers}} players</p>
    <p>Current players: {{gameStuff.players}} </p>
    <p>Special Roles: {{gameStuff.chosenRoles}}</p>
    {{#if isOwner}}
