@@ -26,8 +26,7 @@ Meteor.methods({
 		if (maxPlayers < CONSTANTS.minPlayers || maxPlayers > CONSTANTS.maxPlayers)
 			throw new Meteor.Error("invalid number of players specified");
 		Games.insert({
-			currentPlayerIds: [Meteor.userId()],
-			currentPlayerNames: [Meteor.user().username],
+			players: [Meteor.user().username],
 			currentPlayerCount: 1,
 			missionLayout: CONSTANTS.missionLayouts[maxPlayers-5],
 			maxPlayers: maxPlayers,
@@ -38,27 +37,25 @@ Meteor.methods({
 		});
   }),
   joinGame:game(function(game){
-    if(game.currentPlayerIds.indexOf(Meteor.userId()) !== -1)
+    if(game.players.indexOf(Meteor.user().username) !== -1)
       return;
     Games.update(
       {_id:game._id},
       {
         $push:{
-          currentPlayerNames:Meteor.user().username,
-          currentPlayerIds:Meteor.userId()
+          players:Meteor.user().username
         },
         $inc: {currentPlayerCount:1}
       }
     )
   }),
   leaveGame:game(function(game){
-    if(game.currentPlayerIds.indexOf(Meteor.userId()) === -1)
+    if(game.players.indexOf(Meteor.user().username) === -1)
       return;
     Games.update(
       { _id: game._id},
       {
-        $pull: { currentPlayerNames: Meteor.user().username,
-             currentPlayerIds: Meteor.userId() },
+        $pull: { currentPlayerNames: Meteor.user().username },
         $inc: { currentPlayerCount: -1 }
       }
     );

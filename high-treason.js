@@ -61,7 +61,7 @@ if (Meteor.isClient) {
       var gameId = Session.get("currentGame");
       if (!gameId)
       {
-        var game = Games.findOne({ currentPlayerIds: Meteor.userId()});
+        var game = Games.findOne({ players: Meteor.user().username});
         if (game)
           gameId = game._id;
       }
