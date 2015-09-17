@@ -18,7 +18,7 @@ Template.lobby.helpers({
   },
   isLobbyFull: function() {
     var game = Game.get();
-    return game && game.currentPlayerCount === game.maxPlayers;
+    return game && game.players.length >= game.maxPlayers;
   },
 });
 

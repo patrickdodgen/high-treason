@@ -69,7 +69,7 @@ Meteor.methods({
       _id: game._id
     }, {
       $pull: {
-        currentPlayerNames: Meteor.user().username
+        players: Meteor.user().username
       },
       $inc: {
         currentPlayerCount: -1
