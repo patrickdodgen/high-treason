@@ -22,6 +22,21 @@ var game = function(fn) {
   });
 };
 
+var playerAdd = function(game, playerName) {
+  if (game.players.indexOf(playerName) !== -1)
+    return;
+  Games.update({
+    _id: game._id
+  }, {
+    $push: {
+      players: playerName
+    },
+    $inc: {
+      currentPlayerCount: 1
+    }
+  });
+};
+
 Meteor.methods({
   createGame: auth(function(maxPlayers, chosenRoles) {
     if (maxPlayers < CONSTANTS.minPlayers || maxPlayers > CONSTANTS.maxPlayers)
@@ -38,18 +53,14 @@ Meteor.methods({
     });
   }),
   joinGame: game(function(game) {
-    if (game.players.indexOf(Meteor.user().username) !== -1)
-      return;
-    Games.update({
-      _id: game._id
-    }, {
-      $push: {
-        players: Meteor.user().username
-      },
-      $inc: {
-        currentPlayerCount: 1
-      }
-    })
+    playerAdd(game, Meteor.user().username);
+  }),
+  addBot: game(function(game) {
+    var botNumber = 0;
+    var botName = 'Simpleton 0 (Bot)';
+    while (game.players.indexOf(botName) > -1)
+      botName = 'Simplteon ' + (++botNumber) + ' (Bot)';
+    playerAdd(game, botName);
   }),
   leaveGame: game(function(game) {
     if (game.players.indexOf(Meteor.user().username) === -1)

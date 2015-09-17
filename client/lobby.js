@@ -32,6 +32,9 @@ Template.lobby.events({
     Game.set(null);
     Session.set('currentPage', 'games');
   },
+  "click .addBot": function() {
+    Meteor.call('addBot', Session.get('currentGame'));
+  },
   "click .leaveGame": function() {
     Meteor.call('leaveGame', Session.get('currentGame'));
     Game.set(null);
