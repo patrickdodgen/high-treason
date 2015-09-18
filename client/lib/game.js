@@ -1,4 +1,10 @@
 Game = {
+  getPlayersOnTeam:function(team) {
+    return this.get().players.find({team:team});
+  },
+  getPlayerWithRole:function(role) {
+    return this.get().players.find({role:role})[0];
+  },
   getPlayer:function() {
     var game = this.get();
     for(var i = 0; i < game.players.length; i++) {

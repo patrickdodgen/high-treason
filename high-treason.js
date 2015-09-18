@@ -1,5 +1,22 @@
 
 if (Meteor.isClient) {
+  checkGameState = function() {
+    var gameId = Session.get("currentGame");
+    if (!gameId) {
+      var game = Games.findOne({
+        players: Meteor.user().username
+      });
+      if (game)
+        gameId = game._id;
+    }
+    if (!gameId) {
+      Session.set('currentPage', 'games');
+    } else {
+      Session.set('currentPage', 'lobby');
+      Session.set('currentGame', gameId);
+    }
+  }
+  
   // This code only runs on the client
   Meteor.subscribe("games");
   Meteor.subscribe("roles");
@@ -55,22 +72,6 @@ if (Meteor.isClient) {
     Session.set('currentPage', 'games');
   });
 
-  checkGameState = function() {
-    var gameId = Session.get("currentGame");
-    if (!gameId) {
-      var game = Games.findOne({
-        players: Meteor.user().username
-      });
-      if (game)
-        gameId = game._id;
-    }
-    if (!gameId) {
-      Session.set('currentPage', 'games');
-    } else {
-      Session.set('currentPage', 'lobby');
-      Session.set('currentGame', gameId);
-    }
-  }
 }
 
 if (Meteor.isServer) {
