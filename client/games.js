@@ -19,10 +19,7 @@ Template.games.helpers({
 Template.games.events({
   "click .create": function() {
     Session.set('currentPage', 'lobbyCreation');
-  }
-});
-
-Template.games.events({
+  },
   "click .join": function() {
     //if (Session.get("currentPage") !== 'games');
     Meteor.call('joinGame', this._id);

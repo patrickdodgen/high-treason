@@ -1,5 +1,5 @@
 // Remove all games
- Games.remove({});
+Games.remove({});
 
 var auth = function(fn) {
   return function() {
@@ -57,6 +57,9 @@ Meteor.methods({
     while(game.hasPlayer(botName))
       botName = 'Simpleton ' + (++botNumber) + ' (Bot)';
     game.addPlayer(botName);
+  }),
+  reassignRoles: game(function(game){
+    game.start();
   }),
   proposeTeam: game(function(game, team) {
     game.proposeTeam(game.getPlayerIndex(Meteor.user().username), team);

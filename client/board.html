@@ -1,6 +1,7 @@
 <template name="board">
 	{{#if route}}
 	<div class="container">
+<<<<<<< HEAD
 		<p> You are currently in the {{game.currentPhase}} phase of {{game.username}}'s game</p>
 		<b> Your role: {{getRole}}</b>
 		<div id="playerDiv">
@@ -8,6 +9,20 @@
 				{{> player}}
 			{{/each}}
 		</div>
+=======
+		<p> You are currently in {{game.username}}'s game</p>
+		<div> Your team: <b>{{getTeam}}</b></div>
+		<div> Your role: <b>{{getRole}}</b></div>
+		<div>
+			You know:
+			{{#each getKnownPlayers}}
+			<b>{{name}}</b>
+			{{/each}}
+		</div>
+		<div>
+			<i>{{getRoleDesc}}</i>
+		</div>
+>>>>>>> d74126c0e1175ee6a47c53cdc03b72f9b23fb3cc
 		<div id="missionDiv">
 			{{#each game.missionLayout}}
 			<p>Mission Size: {{this}}</p>
@@ -35,6 +50,7 @@
 				</div>
 				{{/each}}
 				<button class="proposeTeam">Propose</button>
+				<button class="reassignRoles">Reassign Roles (TEST)</button>
 			</form>
 		</div>
 		{{/if}}

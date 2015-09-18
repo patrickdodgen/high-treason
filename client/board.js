@@ -3,6 +3,24 @@ Template.board.helpers({
     return Session.get("currentPage") ===
       'board';
   },
+  getRoleDesc: function() {
+    var player = Game.getPlayer();
+    var role = player.role;
+    role = Roles.findOne({key:role});
+    if(role && role.desc) {
+      return role.desc;
+    }
+    else if(player.team === 'evil') {
+      return 'You know these players to be evil.';
+    }
+    return ""
+  },
+  getKnownPlayers: function() {
+    return Role.getKnownPlayers();
+  },
+  getTeam: function () {
+    return Game.getPlayer().team;
+  },
   getRole: function() {
     return Game.getPlayer().role;
   },
@@ -38,11 +56,17 @@ Template.player.helpers({
 })
 
 Template.board.events({
+<<<<<<< HEAD
   'click .approve': function(e) {
     Meteor.call('vote', Game.getId(), true);
   },
   'click .reject': function(e) {
     Meteor.call('vote', Game.getId(), false);
+=======
+  'click .reassignRoles': function(e) {
+    e.preventDefault();
+    Meteor.call('reassignRoles', Game.getId());
+>>>>>>> d74126c0e1175ee6a47c53cdc03b72f9b23fb3cc
   },
   'submit #teamForm': function(e) {
     e.preventDefault();
