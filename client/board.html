@@ -1,8 +1,13 @@
 <template name="board">
 	{{#if route}}
 	<div class="container">
-		<p> You are currently in {{game.username}}'s game</p>
+		<p> You are currently in the {{game.currentPhase}} phase of {{game.username}}'s game</p>
 		<b> Your role: {{getRole}}</b>
+		<div id="playerDiv">
+			{{#each game.players}}
+				{{> player}}
+			{{/each}}
+		</div>
 		<div id="missionDiv">
 			{{#each game.missionLayout}}
 			<p>Mission Size: {{this}}</p>
@@ -35,4 +40,13 @@
 		{{/if}}
 	</div>
 	{{/if}}
+</template>
+
+<template name="player">
+	<div class="player">
+		<span>{{this.name}}</span>
+		{{#if nonVotingPhase}}
+			<span>Last Vote: {{lastVote}}</span>
+		{{/if}}
+	</div>
 </template>

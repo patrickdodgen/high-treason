@@ -26,6 +26,17 @@ Template.board.helpers({
   }
 });
 
+Template.player.helpers({
+  nonVotingPhase: function() {
+    return Game.get().currentPhase !== GamePhase.VOTE;
+  },
+  lastVote: function() {
+    if(this.vote === null)
+      return 'None';
+    return this.vote?'Approve':'Reject';
+  }
+})
+
 Template.board.events({
   'click .approve': function(e) {
     Meteor.call('vote', Game.getId(), true);

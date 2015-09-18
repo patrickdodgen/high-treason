@@ -38,6 +38,9 @@ GameModel.prototype.start = function() {
 GameModel.prototype._changePhase = function(newPhase) {
   this.data.currentPhase = newPhase;
 
+  if(newPhase === GamePhase.VOTE) {
+    this._clearVotes();
+  }
   for (var i = 0; i < this.data.players.length; i++) {
     var player = this.data.players[i];
     if(CONSTANTS.botNameRegex.test(player.name)) {
@@ -48,15 +51,13 @@ GameModel.prototype._changePhase = function(newPhase) {
       }
     }
   }
-
-  if(newPhase !== GamePhase.VOTE)
-    this._clearVotes();
   this.save();
 }
 
 GameModel.prototype._clearVotes = function() {
   for (var i = 0; i < this.data.players.length; i++) {
     this.data.players[i].vote = null;
+    this.data.numVotes = 0;
   }
 }
 
