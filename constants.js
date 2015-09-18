@@ -8,7 +8,8 @@ CONSTANTS = {
   	[3,4,4,5,5],
   	[3,4,4,5,5],
   	[3,4,4,5,5]
-  ]
+  ],
+  botNameRegex: /.*\(Bot\)/
 }
 GamePhase = {
   LOBBY: 'lobby',

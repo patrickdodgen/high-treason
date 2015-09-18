@@ -11,6 +11,12 @@
 		<div id="teamDiv">
 			Current Team: {{game.currentTeam}}
 		</div>
+		<div>
+			{{#if votingPhase}}
+				<button class="approve">Approve</button>
+				<button class="reject">Reject</button>
+			{{/if}}
+		</div>
 		{{#if currentlyLeader}}
 		<div id="teamSelector">
 			<p>Choose {{currentMissionSize}}</p>

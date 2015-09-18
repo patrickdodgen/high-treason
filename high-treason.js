@@ -71,7 +71,7 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
 
   Accounts.validateNewUser(function(user) {
-    if (user.username && /.*\(Bot\)/.test(user.username))
+    if (user.username && CONSTANTS.botNameRegex.test(user.username))
       throw new Meteor.Error(403, "That user already exists.");
     if (user.username && user.username.length >= 3)
       return true;

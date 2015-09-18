@@ -15,15 +15,24 @@ Template.board.helpers({
       return game.missionLayout[game.currentMission];
     }
   },
+  votingPhase: function() {
+    return Game.get().currentPhase === GamePhase.VOTE;
+  },
   currentlyLeader: function() {
     var game = Game.get();
     if(game) {
-      return game.leaderIndex === Game.getPlayerIndex();
+      return game.leaderIndex === Game.getPlayerIndex() && game.currentPhase === GamePhase.PROPOSITION;
     }
   }
 });
 
 Template.board.events({
+  'click .approve': function(e) {
+    Meteor.call('vote', Game.getId(), true);
+  },
+  'click .reject': function(e) {
+    Meteor.call('vote', Game.getId(), false);
+  },
   'submit #teamForm': function(e) {
     e.preventDefault();
     var team = [];

@@ -1,5 +1,5 @@
 // Remove all games
-// Games.remove({});
+ Games.remove({});
 
 var auth = function(fn) {
   return function() {
@@ -35,6 +35,7 @@ Meteor.methods({
       missionLayout: CONSTANTS.missionLayouts[maxPlayers - 5],
       currentMission: 0,
       currentPhase: GamePhase.LOBBY,
+      numVotes: 0,
       maxPlayers: maxPlayers,
       chosenRoles: chosenRoles,
       createdAt: new Date(),
@@ -58,7 +59,10 @@ Meteor.methods({
     game.addPlayer(botName);
   }),
   proposeTeam: game(function(game, team) {
-    game.proposeTeam(team);
+    game.proposeTeam(game.getPlayerIndex(Meteor.user().username), team);
+  }),
+  vote: game(function(game, vote) {
+    game.vote(game.getPlayerIndex(Meteor.user().username), vote);
   }),
   leaveGame: game(function(game) {
     if(game.getPlayerIndex(Meteor.user().username) === -1)
