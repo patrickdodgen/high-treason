@@ -1,12 +1,29 @@
 <template name="board">
 	{{#if route}}
-		<div class="container">
-			<p> You are currently in {{gameStuff.username}}'s game</p>
-			<div id="#missionDiv">
-				{{#each gameStuff.missionLayout}}
-					<p>Requires: {{this}}</p>
-				{{/each}}
-			</div>
+	<div class="container">
+		<p> You are currently in {{game.username}}'s game</p>
+		<div id="missionDiv">
+			{{#each game.missionLayout}}
+			<p>Mission Size: {{this}}</p>
+			{{/each}}
 		</div>
+		<div id="teamDiv">
+			Current Team: {{game.currentTeam}}
+		</div>
+		<div id="teamSelector">
+			<p>Choose {{currentMissionSize}}</p>
+			<form id="teamForm">
+				{{#each game.players}}
+				<div>
+					<label>
+						{{this}}
+						<input type="checkbox" name="team" value="{{this}}">
+					</label>
+				</div>
+				{{/each}}
+				<button class="proposeTeam">Propose</button>
+			</form>
+		</div>
+	</div>
 	{{/if}}
 </template>
