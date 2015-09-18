@@ -30,7 +30,10 @@ Meteor.methods({
     if (maxPlayers < CONSTANTS.minPlayers || maxPlayers > CONSTANTS.maxPlayers)
       throw new Meteor.Error("invalid number of players specified");
     var gameId = Games.insert({
+      leaderIndex: 0,
+      currentTeam: [],
       missionLayout: CONSTANTS.missionLayouts[maxPlayers - 5],
+      currentMission: 0,
       maxPlayers: maxPlayers,
       chosenRoles: chosenRoles,
       createdAt: new Date(),
@@ -53,8 +56,21 @@ Meteor.methods({
       botName = 'Simpleton ' + (++botNumber) + ' (Bot)';
     game.addPlayer(botName);
   }),
+  proposeTeam: game(function(game, team) {
+    var playerIdx = game.getPlayerIndex(Meteor.user().username);
+    if (playerIdx !== game.data.leaderIndex)
+      throw new Meteor.Error("Cannot propose a team when not the leader");
+    for (var i = 0; i < team.length; i++) {
+      if (game.getPlayerIndex(team[i]) < 0)
+        throw new Meteor.Error("Only players in the current game can be on a team");
+    }
+    var nextLeaderIndex = (game.data.leaderIndex+1)%game.data.players.length;
+    game.data.currentTeam = team;
+    game.data.leaderIndex = nextLeaderIndex;
+    game.save();
+  }),
   leaveGame: game(function(game) {
-    if (game.players.indexOf(Meteor.user().username) === -1)
+    if(game.getPlayerIndex(Meteor.user().username) === -1)
       return;
     game.dropPlayer(Meteor.user().username);
   }),
