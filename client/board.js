@@ -62,6 +62,11 @@ Template.board.events({
   'click .reject': function(e) {
     Meteor.call('vote', Game.getId(), false);
   },
+  'click .closeGame': function(e) {
+    Meteor.call('closeGame', Game.getId());
+    Game.set(null);
+    Session.set('currentPage', 'games');
+  },
   'click .reassignRoles': function(e) {
     e.preventDefault();
     Meteor.call('reassignRoles', Game.getId());
