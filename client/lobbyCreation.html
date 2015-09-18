@@ -22,9 +22,9 @@
 
 <template name="roleSelection">
   <tr>
-    <td>{{name}} ({{key}})</td>
+    <td><label for="role-{{key}}">{{name}} ({{key}})</label></td>
     <td>
-      <input type="checkbox" name="{{key}}" />
+      <input id="role-{{key}}" type="checkbox" name="{{key}}" />
     </td>
   </tr>
 </template>
