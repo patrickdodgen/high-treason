@@ -4,7 +4,9 @@ GameModel = function(data) {
   if(!this.data.players)
     this.data.players = [];
 }
+
 GameModel.prototype.start = function() {
+  console.log("STARTING GAME");
   // Assign roles
   var shuffledPlayers = this.data.players.concat([]).shuffle();
   var playerIdx = 0;
@@ -12,24 +14,27 @@ GameModel.prototype.start = function() {
   for(var i = 0; i < this.data.chosenRoles.length; i++) {
     var roleKey = this.data.chosenRoles[i];
     var role = Roles.findOne({key:this.data.chosenRoles[i]});
+    var player = shuffledPlayers[playerIdx];
     teamSizes[role.team]++;
-    shuffledPlayers[playerIdx].role = role.key;
-    shuffledPlayers[playerIdx].team = role.team;
+    player.role = role.key;
+    player.team = role.team;
     playerIdx++;
   }
-  var totalGood = Utils.getGoodTeamSize(shuffledPlayers.length);
-  var totalEvil = shuffledPlayers.length - totalGood;
-  while(teamSizes.good < totalGood) {
-    shuffledPlayers[playerIdx].role = 'none';
-    shuffledPlayers[playerIdx].team = 'good';
-    playerIdx++;
-    teamSizes.good++;
-  }
-  while(teamSizes.evil < totalEvil) {
-    shuffledPlayers[playerIdx].role = 'none';
-    shuffledPlayers[playerIdx].team = 'evil';
-    playerIdx++;
-    teamSizes.evil++;
+  if (playerIdx < this.data.players.length) {
+    var totalGood = Utils.getGoodTeamSize(shuffledPlayers.length);
+    var totalEvil = shuffledPlayers.length - totalGood;
+    while(teamSizes.good < totalGood) {
+      shuffledPlayers[playerIdx].role = 'none';
+      shuffledPlayers[playerIdx].team = 'good';
+      playerIdx++;
+      teamSizes.good++;
+    }
+    while(teamSizes.evil < totalEvil) {
+      shuffledPlayers[playerIdx].role = 'none';
+      shuffledPlayers[playerIdx].team = 'evil';
+      playerIdx++;
+      teamSizes.evil++;
+    }
   }
   this.save();
 };

@@ -3,6 +3,10 @@ Template.board.helpers({
     return Session.get("currentPage") ===
       'board';
   },
+  getKnownPlayers: function() {
+    console.log(Role.getKnownPlayers());
+    return Role.getKnownPlayers();
+  },
   getRole: function() {
     return Game.getPlayer().role;
   },
