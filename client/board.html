@@ -2,12 +2,16 @@
 	{{#if route}}
 	<div class="container">
 		<p> You are currently in {{game.username}}'s game</p>
-		<b> Your role: {{getRole}}</b>
+		<div> Your team: <b>{{getTeam}}</b></div>
+		<div> Your role: <b>{{getRole}}</b></div>
 		<div>
 			You know:
 			{{#each getKnownPlayers}}
 			<b>{{name}}</b>
 			{{/each}}
+		</div>
+		<div>
+			<i>{{getRoleDesc}}</i>
 		</div>
 		<div id="missionDiv">
 			{{#each game.missionLayout}}
@@ -30,6 +34,7 @@
 				</div>
 				{{/each}}
 				<button class="proposeTeam">Propose</button>
+				<button class="reassignRoles">Reassign Roles (TEST)</button>
 			</form>
 		</div>
 		{{/if}}
