@@ -21,7 +21,7 @@ Template.lobbyCreation.events({
 
     roles.forEach(function(role) {
       if (event.target[role.key].checked)
-        chosenRoles.push(role.name);
+        chosenRoles.push(role.key);
     });
 
     Meteor.call('createGame', maxPlayers, chosenRoles);

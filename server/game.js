@@ -47,7 +47,7 @@ Meteor.methods({
     game.addPlayer(Meteor.user().username);
   }),
   startGame: game(function(game){
-
+    game.start();
   }),
   addBot: game(function(game) {
     var botNumber = 0;

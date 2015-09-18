@@ -2,6 +2,7 @@
 	{{#if route}}
 	<div class="container">
 		<p> You are currently in {{game.username}}'s game</p>
+		<b> Your role: {{getRole}}</b>
 		<div id="missionDiv">
 			{{#each game.missionLayout}}
 			<p>Mission Size: {{this}}</p>

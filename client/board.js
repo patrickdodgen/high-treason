@@ -16,6 +16,9 @@ Template.board.helpers({
     return Session.get("currentPage") ===
       'board';
   },
+  getRole: function() {
+    return Game.getPlayer().role;
+  },
   game: function() {
     return getGame();
   },

@@ -1,15 +1,18 @@
-var upsertRole = function(name, key) {
+Roles.remove({});
+
+var upsertRole = function(name, team, key) {
   if(!key)
     key = name.toLowerCase();
   Roles.update({key:key}, {
     name:name,
+    team:team,
     key:key
   }, {upsert:true});
 };
 
-upsertRole("Merlin");
-upsertRole("Percival");
-upsertRole("Assassin");
-upsertRole("Morgana");
-upsertRole("Mordred");
-upsertRole("Oberon");
+upsertRole("Merlin", 'good');
+upsertRole("Percival", 'good');
+upsertRole("Assassin", 'evil');
+upsertRole("Morgana", 'evil');
+upsertRole("Mordred", 'evil');
+upsertRole("Oberon", 'evil');
