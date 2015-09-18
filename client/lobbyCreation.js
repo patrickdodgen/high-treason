@@ -20,7 +20,7 @@ Template.lobbyCreation.events({
     var chosenRoles = [];
 
     roles.forEach(function(role) {
-      if (event.target[role.name].checked)
+      if (event.target[role.key].checked)
         chosenRoles.push(role.name);
     });
 

@@ -1,5 +1,3 @@
-Games = new Mongo.Collection("games");
-Roles = new Mongo.Collection("roles");
 
 if (Meteor.isClient) {
   // This code only runs on the client

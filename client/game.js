@@ -2,6 +2,9 @@ Game = {
   get: function() {
     return Games.findOne({_id:Session.get('currentGame')});
   },
+  getId: function() {
+    return Session.get('currentGame');
+  },
   set:function(id) {
     if(id && id._id)
       id = id._id;

@@ -1,3 +1,6 @@
+// Remove all games
+// Games.remove({});
+
 var auth = function(fn) {
   return function() {
     if (!Meteor.userId()) {
@@ -17,20 +20,8 @@ var game = function(fn) {
     });
     if (!game)
       throw new Meteor.Error("invalid game-id: " + gameId);
-    arguments[0] = game;
+    arguments[0] = new GameModel(game);
     fn.apply(this, arguments);
-  });
-};
-
-var playerAdd = function(game, playerName) {
-  if (game.players.indexOf(playerName) !== -1)
-    return;
-  Games.update({
-    _id: game._id
-  }, {
-    $push: {
-      players: playerName
-    }
   });
 };
 
@@ -38,8 +29,7 @@ Meteor.methods({
   createGame: auth(function(maxPlayers, chosenRoles) {
     if (maxPlayers < CONSTANTS.minPlayers || maxPlayers > CONSTANTS.maxPlayers)
       throw new Meteor.Error("invalid number of players specified");
-    Games.insert({
-      players: [Meteor.user().username],
+    var gameId = Games.insert({
       missionLayout: CONSTANTS.missionLayouts[maxPlayers - 5],
       maxPlayers: maxPlayers,
       chosenRoles: chosenRoles,
@@ -47,30 +37,29 @@ Meteor.methods({
       owner: Meteor.userId(),
       username: Meteor.user().username
     });
+    var game = new GameModel(Games.findOne({_id:gameId}));
+    game.addPlayer(Meteor.user().username);
   }),
   joinGame: game(function(game) {
-    playerAdd(game, Meteor.user().username);
+    game.addPlayer(Meteor.user().username);
+  }),
+  startGame: game(function(game){
+
   }),
   addBot: game(function(game) {
     var botNumber = 0;
     var botName = 'Simpleton 0 (Bot)';
-    while (game.players.indexOf(botName) > -1)
-      botName = 'Simplteon ' + (++botNumber) + ' (Bot)';
-    playerAdd(game, botName);
+    while(game.hasPlayer(botName))
+      botName = 'Simpleton ' + (++botNumber) + ' (Bot)';
+    game.addPlayer(botName);
   }),
   leaveGame: game(function(game) {
     if (game.players.indexOf(Meteor.user().username) === -1)
       return;
-    Games.update({
-      _id: game._id
-    }, {
-      $pull: {
-        players: Meteor.user().username
-      }
-    });
+    game.dropPlayer(Meteor.user().username);
   }),
   closeGame: game(function(game) {
-    if (game.owner === Meteor.userId())
+    if (game.data.owner === Meteor.userId())
       Games.remove({
         _id: game._id
       });

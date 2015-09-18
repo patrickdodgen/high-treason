@@ -25,6 +25,7 @@ Template.lobby.helpers({
 Template.lobby.events({
   "click .startGame": function() {
     // do some stuff here
+    Meteor.call('startGame', Game.getId());
     Session.set("currentPage", "board");
   },
   "click .closeGame": function() {
