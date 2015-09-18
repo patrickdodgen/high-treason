@@ -10,6 +10,7 @@
 		<div id="teamDiv">
 			Current Team: {{game.currentTeam}}
 		</div>
+		{{#if currentlyLeader}}
 		<div id="teamSelector">
 			<p>Choose {{currentMissionSize}}</p>
 			<form id="teamForm">
@@ -24,6 +25,7 @@
 				<button class="proposeTeam">Propose</button>
 			</form>
 		</div>
+		{{/if}}
 	</div>
 	{{/if}}
 </template>

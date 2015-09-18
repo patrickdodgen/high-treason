@@ -24,6 +24,12 @@ Template.board.helpers({
     if(game) {
       return game.missionLayout[game.currentMission];
     }
+  },
+  currentlyLeader: function() {
+    var game = getGame();
+    if(game) {
+      return game.leaderIndex === game.players.indexOf(Meteor.user().username);
+    }
   }
 });
 
@@ -35,6 +41,6 @@ Template.board.events({
       if(e.target.team[i].checked)
         team.push(e.target.team[i].value);
     }
-    console.log(team);
+    Meteor.call('proposeTeam', Session.get("currentGame"), team);
   }
 })

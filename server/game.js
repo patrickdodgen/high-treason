@@ -62,10 +62,10 @@ Meteor.methods({
     playerAdd(game, botName);
   }),
   proposeTeam: game(function(game, team) {
-    if (game.players.indexOf(Meteor.user().username !== game.leaderIndex))
+    if (game.players.indexOf(Meteor.user().username) !== game.leaderIndex)
       throw new Meteor.Error("Cannot propose a team when not the leader");
     for (var i = 0; i < team.length; i++) {
-      if (!game.players.indexOf(team[i]) > -1)
+      if (game.players.indexOf(team[i]) < 0)
         throw new Meteor.Error("Only players in the current game can be on a team");
     }
     var nextLeaderIndex = (game.leaderIndex+1)%game.players.length;
