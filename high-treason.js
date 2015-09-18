@@ -1,22 +1,16 @@
 
 if (Meteor.isClient) {
   checkGameState = function() {
-    var gameId = Session.get("currentGame");
-    if (!gameId) {
-      var game = Games.findOne({
-        players: Meteor.user().username
-      });
-      if (game)
-        gameId = game._id;
-    }
-    if (!gameId) {
+    var game = Game.get();
+    if (!game) {
       Session.set('currentPage', 'games');
     } else {
-      Session.set('currentPage', 'lobby');
+      var gameId = game._id;
+      Session.set('currentPage', game.currentPhase === GamePhase.LOBBY ? 'lobby' : 'board');
       Session.set('currentGame', gameId);
     }
   }
-  
+
   // This code only runs on the client
   Meteor.subscribe("games");
   Meteor.subscribe("roles");

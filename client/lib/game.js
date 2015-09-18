@@ -18,7 +18,7 @@ Game = {
     return this.get().players.find({name:Meteor.user().username})[0];
   },
   get: function() {
-    return Games.findOne({_id:Session.get('currentGame')});
+    return Games.findOne({$or: [{_id:Session.get('currentGame')}, {players: { $elemMatch: {name: Meteor.user().username} }}]});
   },
   getId: function() {
     return Session.get('currentGame');
