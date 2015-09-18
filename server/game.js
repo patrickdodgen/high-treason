@@ -34,6 +34,7 @@ Meteor.methods({
       currentTeam: [],
       missionLayout: CONSTANTS.missionLayouts[maxPlayers - 5],
       currentMission: 0,
+      currentPhase: GamePhase.LOBBY,
       maxPlayers: maxPlayers,
       chosenRoles: chosenRoles,
       createdAt: new Date(),
@@ -57,17 +58,7 @@ Meteor.methods({
     game.addPlayer(botName);
   }),
   proposeTeam: game(function(game, team) {
-    var playerIdx = game.getPlayerIndex(Meteor.user().username);
-    if (playerIdx !== game.data.leaderIndex)
-      throw new Meteor.Error("Cannot propose a team when not the leader");
-    for (var i = 0; i < team.length; i++) {
-      if (game.getPlayerIndex(team[i]) < 0)
-        throw new Meteor.Error("Only players in the current game can be on a team");
-    }
-    var nextLeaderIndex = (game.data.leaderIndex+1)%game.data.players.length;
-    game.data.currentTeam = team;
-    game.data.leaderIndex = nextLeaderIndex;
-    game.save();
+    game.proposeTeam(team);
   }),
   leaveGame: game(function(game) {
     if(game.getPlayerIndex(Meteor.user().username) === -1)

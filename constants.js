@@ -10,3 +10,10 @@ CONSTANTS = {
   	[3,4,4,5,5]
   ]
 }
+GamePhase = {
+  LOBBY: 'lobby',
+  PROPOSITION: 'propose',
+  VOTE: 'vote',
+  MISSION: 'mission',
+  END: 'end'
+}

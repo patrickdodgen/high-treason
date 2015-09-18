@@ -36,6 +36,7 @@ GameModel.prototype.start = function() {
       teamSizes.evil++;
     }
   }
+  this.data.currentPhase = GamePhase.PROPOSITION;
   this.save();
 };
 
@@ -56,6 +57,21 @@ GameModel.prototype.getPlayerIndex = function(playerName) {
       return i;
   }
   return null
+};
+
+GameModel.prototype.proposeTeam = function(team) {
+  var playerIdx = this.getPlayerIndex(Meteor.user().username);
+  if (playerIdx !== this.data.leaderIndex)
+    throw new Meteor.Error("Cannot propose a team when not the leader");
+  for (var i = 0; i < team.length; i++) {
+    if (this.getPlayerIndex(team[i]) < 0)
+      throw new Meteor.Error("Only players in the current game can be on a team");
+  }
+  var nextLeaderIndex = (this.data.leaderIndex+1)%this.data.players.length;
+  this.data.currentTeam = team;
+  this.data.leaderIndex = nextLeaderIndex;
+  this.data.currentPhase = GamePhase.VOTE;
+  this.save();
 };
 
 GameModel.prototype.hasPlayer = function(playerName) {
