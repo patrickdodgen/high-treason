@@ -36,6 +36,8 @@ Meteor.methods({
       currentMission: 0,
       currentPhase: GamePhase.LOBBY,
       numVotes: 0,
+      numMissionActions: 0,
+      missionResults: [],
       maxPlayers: maxPlayers,
       chosenRoles: chosenRoles,
       createdAt: new Date(),
@@ -66,6 +68,9 @@ Meteor.methods({
   }),
   vote: game(function(game, vote) {
     game.vote(game.getPlayerIndex(Meteor.user().username), vote);
+  }),
+  doMission: game(function(game, pass) {
+    game.doMission(game.getPlayerIndex(Meteor.user().username), pass);
   }),
   leaveGame: game(function(game) {
     if(game.getPlayerIndex(Meteor.user().username) === -1)

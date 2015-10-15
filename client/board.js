@@ -36,6 +36,12 @@ Template.board.helpers({
   votingPhase: function() {
     return Game.get().currentPhase === GamePhase.VOTE;
   },
+  missionPhase: function() {
+    return Game.get().currentPhase === GamePhase.MISSION && Game.get().currentTeam.indexOf(Game.getPlayer().name) >= 0;
+  },
+  canFail: function() {
+    return Game.getPlayer().team === 'evil';
+  },
   currentlyLeader: function() {
     var game = Game.get();
     if(game) {
@@ -61,6 +67,12 @@ Template.board.events({
   },
   'click .reject': function(e) {
     Meteor.call('vote', Game.getId(), false);
+  },
+  'click .pass': function(e) {
+    Meteor.call('doMission', Game.getId(), true);
+  },
+  'click .fail': function(e) {
+    Meteor.call('doMission', Game.getId(), false);
   },
   'click .closeGame': function(e) {
     Meteor.call('closeGame', Game.getId());

@@ -23,6 +23,15 @@
 			<p>Mission Size: {{this}}</p>
 			{{/each}}
 		</div>
+		<div id="missionResultDiv">
+			{{#each game.missionResults}}
+				{{#if this}}
+					PASSED
+				{{else}}
+					FAILED
+				{{/if}}
+			{{/each}}
+		</div>
 		<div id="teamDiv">
 			Current Team: {{game.currentTeam}}
 		</div>
@@ -30,6 +39,12 @@
 			{{#if votingPhase}}
 				<button class="approve">Approve</button>
 				<button class="reject">Reject</button>
+			{{/if}}
+			{{#if missionPhase}}
+				<button class="pass">Pass</button>
+				{{#if canFail}}
+					<button class="fail">Fail</button>
+				{{/if}}
 			{{/if}}
 		</div>
 		{{#if currentlyLeader}}

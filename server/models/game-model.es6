@@ -41,10 +41,17 @@ GameModel.prototype.start = function() {
 };
 
 GameModel.prototype._changePhase = function(newPhase) {
+  var prevPhase = this.data.currentPhase;
   this.data.currentPhase = newPhase;
 
+  if(prevPhase === GamePhase.MISSION) {
+
+  }
   if(newPhase === GamePhase.VOTE) {
     this._clearVotes();
+  }
+  if(newPhase === GamePhase.MISSION) {
+    this._clearMissionActions();
   }
   for (var i = 0; i < this.data.players.length; i++) {
     var player = this.data.players[i];
@@ -53,6 +60,8 @@ GameModel.prototype._changePhase = function(newPhase) {
           this.vote(i, true);
       } else if (newPhase === GamePhase.PROPOSITION && this.data.leaderIndex === i) {
           this.proposeTeam(i, this.data.players.map(function(p) {return p.name}).splice(0, this.data.missionLayout[this.data.currentMission]));
+      } else if (newPhase === GamePhase.MISSION && this.data.currentTeam.indexOf(player.name) >= 0) {
+          this.doMission(i, player.team !== 'evil');
       }
     }
   }
@@ -62,8 +71,15 @@ GameModel.prototype._changePhase = function(newPhase) {
 GameModel.prototype._clearVotes = function() {
   for (var i = 0; i < this.data.players.length; i++) {
     this.data.players[i].vote = null;
-    this.data.numVotes = 0;
   }
+  this.data.numVotes = 0;
+}
+
+GameModel.prototype._clearMissionActions = function() {
+  for (var i = 0; i < this.data.players.length; i++) {
+    this.data.players[i].missionPass = null;
+  }
+  this.data.numMissionActions = 0;
 }
 
 GameModel.prototype.addPlayer = function(playerName) {
@@ -95,8 +111,17 @@ GameModel.prototype.vote = function(playerIndex, approve) {
     this.data.numVotes++;
   }
   player.vote = approve;
-  if(this.data.numVotes >= this.data.players.length)
-    this._changePhase(GamePhase.MISSION);
+  if(this.data.numVotes >= this.data.players.length) {
+    var numApproves = 0;
+    for(var i = 0; i < this.data.players.length; i++) {
+      numApproves += this.data.players[i].vote?1:0;
+    }
+    if(numApproves > this.data.players.length - numApproves)
+      this._changePhase(GamePhase.MISSION);
+    else {
+      this._changePhase(GamePhase.PROPOSITION);
+    }
+  }
   else
     this.save();
 }
@@ -117,6 +142,39 @@ GameModel.prototype.proposeTeam = function(playerIndex, team) {
   this.data.leaderIndex = nextLeaderIndex;
   this._changePhase(GamePhase.VOTE);
   this.save();
+};
+
+GameModel.prototype.doMission = function(playerIndex, pass) {
+  if(pass === null)
+    return;
+  if(!this.data.currentPhase === GamePhase.MISSION)
+    throw new Meteor.Error("Cannot act on missions when not mission phase");
+  var player = this.data.players[playerIndex];
+  if(this.data.currentTeam.indexOf(player.name) < 0)
+    throw new Meteor.Error("Cannot act on missions when not on mission team");
+  if(player.missionPass == null && pass !== null) {
+    this.data.numMissionActions++;
+  }
+  player.missionPass = pass;
+  if(this.data.numMissionActions >= this.data.currentTeam.length) {
+    var missionFailed = false;
+    for(var i = 0; i < this.data.players.length; i++) {
+      var playerFailed = this.data.players[i].missionPass !== null && !this.data.players[i].missionPass;
+      missionFailed = missionFailed || playerFailed;
+    }
+    this.data.missionResults.push(!missionFailed);
+    var numFails = 0;
+    for(var i = 0; i < this.data.missionResults.length; i++)
+    {
+      numFails += this.data.missionResults[i]?1:0;
+    }
+    if(numFails < 3 && this.data.missionResults.length - numFails < 3)
+      this._changePhase(GamePhase.PROPOSITION);
+    else
+      this._changePhase(GamePhase.END)
+  }
+  else
+    this.save();
 };
 
 GameModel.prototype.hasPlayer = function(playerName) {
